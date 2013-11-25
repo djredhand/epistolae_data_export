@@ -27,7 +27,7 @@ try:
             fulltext)
     	all_rows.append(row_data)
 
-    with open('test.csv', 'wb') as csvfile:
+    with open('letter.csv', 'wb') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t',quotechar='"', quoting=csv.QUOTE_ALL)
         writer.writerows(all_rows)
 		#print all_rows
