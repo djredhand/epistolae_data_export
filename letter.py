@@ -3,7 +3,7 @@ import psycopg2.extras
 import csv
 
 try:
-	conn = psycopg2.connect("dbname='epistolae' user='jdavis1' host='localhost' password='jedavis13'")
+	conn = psycopg2.connect("dbname='epistolae' user='postgres' host='localhost' password='jedavis13'")
 
 except:
 	print "I can't connect man!"
@@ -16,21 +16,23 @@ try:
     all_rows = []
     header = (['id','date','text','original_text','historical_context',
         'scholarly_notes', 'manuscript_source', 'printed_source','authenticity',
-        'translation_notes', 'keywords','modified','deleted','fulltext'])
+        'translation_notes', 'keywords','modified','deleted'])
     all_rows.append(header)
     for row in letter_rows:
         original_text = row['original_text']
         original_text = original_text[:10000]
+        text = row['text']
+        text = text[:10000]
         historical_context = row['historical_context']
         historical_context = historical_context[:10000]
         fulltext = row['fulltext']
         fulltext = fulltext[:10000]
 
     	row_data = (
-            row['id'], row['date'], original_text, row['scholarly_notes'],
-            row['manuscript_source'], row['printed_source'], row['authenticity'],
-            row['translation_notes'], row['keywords'], row['modified'], row['deleted'],
-            fulltext)
+            row['id'], row['date'], text, original_text, row['historical_context'],
+            row['scholarly_notes'],row['manuscript_source'], row['printed_source'],
+            row['authenticity'], row['translation_notes'], row['keywords'], row['modified'],
+            row['deleted'])
     	all_rows.append(row_data)
 
     with open('letter.csv', 'wb') as csvfile:
