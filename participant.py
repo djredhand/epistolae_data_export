@@ -20,7 +20,7 @@ try:
         'scholarly_notes', 'manuscript_source', 'printed_source','authenticity',
         'translation_notes', 'keywords','modified','deleted','fulltext', 'woman_name'])
     all_rows.append(header)
-
+    count = 0
     for row in letter_rows:
         letter_map_id = row['id']
         text = row['text']
@@ -31,6 +31,7 @@ try:
         historical_context = historical_context[:10000]
         fulltext = row['fulltext']
         fulltext = fulltext[:10000]
+        woman_name = ''
 
         cur.execute("SELECT * from participant WHERE letter_id = %s",(letter_map_id,))
         letter_map = cur.fetchall()
@@ -43,8 +44,8 @@ try:
             if participant_woman_id > 0:
                 cur.execute("SELECT * from woman WHERE id = %s",(participant_woman_id,))
                 woman = cur.fetchall()
-
-            pdb.set_trace()
+                woman_name = woman[0][1]
+            #pdb.set_trace()
         #letter_text = row['fulltext']
         #letter_text = fulltext[:10000]
 
@@ -52,7 +53,7 @@ try:
             row['id'], row['date'], text, original_text, historical_context, row['scholarly_notes'],
             row['manuscript_source'], row['printed_source'], row['authenticity'],
             row['translation_notes'], row['keywords'], row['modified'], row['deleted'],
-            fulltext)
+            fulltext, woman_name)
     	
         if count < 11:
             all_rows.append(row_data)
