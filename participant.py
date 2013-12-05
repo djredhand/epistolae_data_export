@@ -10,7 +10,7 @@ except:
 	print "I can't connect man!"
 
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-count = 0
+
 try:
     cur.execute("""SELECT * from letter""")
     letter_rows = cur.fetchall()
@@ -23,6 +23,15 @@ try:
 
     for row in letter_rows:
         letter_map_id = row['id']
+        text = row['text']
+        text = text[:10000]
+        original_text = row['original_text']
+        original_text = original_text[:10000]
+        historical_context = row['historical_context']
+        historical_context = historical_context[:10000]
+        fulltext = row['fulltext']
+        fulltext = fulltext[:10000]
+
         cur.execute("SELECT * from participant WHERE letter_id = %s",(letter_map_id,))
         letter_map = cur.fetchall()
         for participant in letter_map:
@@ -31,15 +40,16 @@ try:
             participant_woman_id = participant[2]
             participant_name = participant[3]
             participant_role = participant[4]
+            if participant_woman_id > 0:
+                cur.execute("SELECT * from woman WHERE id = %s",(participant_woman_id,))
+                woman = cur.fetchall()
 
-            cur.execute("SELECT * from woman WHERE id = %s",(participant_woman_id,))
-            woman = cur.fetchall()
             pdb.set_trace()
         #letter_text = row['fulltext']
         #letter_text = fulltext[:10000]
 
     	row_data = (
-            row['id'], row['date'], original_text, row['scholarly_notes'],
+            row['id'], row['date'], text, original_text, historical_context, row['scholarly_notes'],
             row['manuscript_source'], row['printed_source'], row['authenticity'],
             row['translation_notes'], row['keywords'], row['modified'], row['deleted'],
             fulltext)
