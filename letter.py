@@ -31,7 +31,7 @@ try:
         fulltext = fulltext[:10000]
 
     	row_data = (
-            row['id'], row['date'], text, original_text, row['scholarly_notes'],
+            row['id'], row['date'], text, original_text, historical_context, row['scholarly_notes'],
             row['manuscript_source'], row['printed_source'], row['authenticity'],
             row['translation_notes'], row['keywords'], row['modified'], row['deleted'],
             fulltext)
