@@ -9,6 +9,7 @@ except:
 	print "I can't connect man!"
 
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+count = 0
 try:
     cur.execute("""SELECT * from letter""")
     letter_rows = cur.fetchall()
@@ -18,6 +19,7 @@ try:
         'scholarly_notes', 'manuscript_source', 'printed_source','authenticity',
         'translation_notes', 'keywords','modified','deleted','fulltext'])
     all_rows.append(header)
+
     for row in letter_rows:
         original_text = row['original_text']
         original_text = original_text[:10000]
@@ -31,7 +33,11 @@ try:
             row['manuscript_source'], row['printed_source'], row['authenticity'],
             row['translation_notes'], row['keywords'], row['modified'], row['deleted'],
             fulltext)
-    	all_rows.append(row_data)
+    	
+        if count < 11:
+            all_rows.append(row_data)
+            count = count + 1
+
 
     with open('letter.csv', 'wb') as csvfile:
         writer = csv.writer(csvfile, delimiter=',',quotechar='"', quoting=csv.QUOTE_ALL)
