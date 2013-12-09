@@ -16,9 +16,9 @@ try:
     letter_rows = cur.fetchall()
     
     all_rows = []
-    header = (['id','date','text','original_text','historical_context',
+    header = (['id','original_letter_id','date','text','original_text','historical_context',
         'scholarly_notes', 'manuscript_source', 'printed_source','authenticity',
-        'translation_notes', 'keywords','modified','deleted','fulltext', 'woman_name'])
+        'translation_notes', 'keywords','modified','deleted','fulltext', 'sender', 'receiver'])
     all_rows.append(header)
     count = 0
     for row in letter_rows:
@@ -31,7 +31,8 @@ try:
         historical_context = historical_context[:10000]
         fulltext = row['fulltext']
         fulltext = fulltext[:10000]
-        woman_name = ''
+        sender = ''
+        receiver = ''
 
         cur.execute("SELECT * from participant WHERE letter_id = %s",(letter_map_id,))
         letter_map = cur.fetchall()
@@ -41,23 +42,36 @@ try:
             participant_woman_id = participant[2]
             participant_name = participant[3]
             participant_role = participant[4]
-            if participant_woman_id > 0:
+            if participant_role == "sender" and participant_woman_id > 0:
                 cur.execute("SELECT * from woman WHERE id = %s",(participant_woman_id,))
                 woman = cur.fetchall()
-                woman_name = woman[0][1]
-            #pdb.set_trace()
-        #letter_text = row['fulltext']
-        #letter_text = fulltext[:10000]
+                sender = woman[0][1]
+
+            if participant_role == "receiver" and participant_woman_id > 0:
+                cur.execute("SELECT * from woman WHERE id = %s",(participant_woman_id,))
+                woman = cur.fetchall()
+                receiver = woman[0][1]
+
+            if participant_role == "sender" and participant_woman_id == 0:
+                sender = participant_name
+
+            if participant_role == "receiver" and participant_woman_id == 0:
+                receiver = participant_name
 
     	row_data = (
-            row['id'], row['date'], text, original_text, historical_context, row['scholarly_notes'],
+            row['id'], row['id'], row['date'], text, original_text, historical_context, row['scholarly_notes'],
             row['manuscript_source'], row['printed_source'], row['authenticity'],
             row['translation_notes'], row['keywords'], row['modified'], row['deleted'],
-            fulltext, woman_name)
+            fulltext, sender, receiver)
     	
-        if count < 11:
-            all_rows.append(row_data)
-            count = count + 1
+        ''' if we want to create short csv's for testing
+            
+            if count < 11:
+                all_rows.append(row_data)
+                count = count + 1
+        '''
+
+        all_rows.append(row_data)
 
 
     with open('participant.csv', 'wb') as csvfile:
