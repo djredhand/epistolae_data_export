@@ -15,7 +15,7 @@ try:
     letter_rows = cur.fetchall()
     
     all_rows = []
-    header = (['id','name','title','bio','bio_notes','birthdate', 'birthplace','fulltext'])
+    header = (['id','name','title','bio','bio_notes','birthdate', 'birthplace', 'deathdate', 'fulltext'])
     all_rows.append(header)
 
     for row in letter_rows:
@@ -25,11 +25,10 @@ try:
         fulltext = fulltext[:10000]
 
     	row_data = (
-            row['id'], row['name'], row['title'], bio, row['bio_notes'], row['birthdate'], row['birthplace'], fulltext)
+            row['id'], row['name'], row['title'], bio, row['bio_notes'], row['birthdate'], row['birthplace'],row['deathdate'], fulltext)
     	
-        if count < 11:
-            all_rows.append(row_data)
-            count = count + 1
+        
+        all_rows.append(row_data)
 
 
     with open('woman.csv', 'wb') as csvfile:
